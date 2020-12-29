@@ -25,11 +25,11 @@
     "format": "./node_modules/prettier/bin-prettier.js --write *.js test/**/*.js"
   },
   "devDependencies": {
-    "grunt-cli": "~0.1.9",
-    "grunt": "~0.4.1",
     "chai": "~1.8.1",
-    "prettier": "~2.2.1",
-    "grunt-mocha-test": "~0.7.0"
+    "grunt": "~0.4.1",
+    "grunt-cli": "~0.1.9",
+    "grunt-mocha-test": "~0.7.0",
+    "prettier": "~2.2.1"
   },
   "repository": {
     "type": "git",
@@ -39,5 +39,7 @@
     "type": "MIT",
     "url": "https://raw.github.com/ARMmbed/cbor-sync/master/LICENSE.txt"
   },
-  "dependencies": {}
+  "dependencies": {
+    "bigint-buffer": "^1.1.5"
+  }
 }

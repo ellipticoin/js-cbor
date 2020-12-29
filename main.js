@@ -1,3 +1,5 @@
+const { toBigIntBE, toBufferBE } = require("bigint-buffer");
+
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
@@ -129,7 +131,12 @@
         return this.readUint16() * 65536 + this.readUint16();
       },
       readUint64: function () {
-        return this.readUint32() * 4294967296 + this.readUint32();
+        const result = toBigIntBE(Buffer.from(this.readChunk(8)));
+        if (result < BigInt(Number.MAX_SAFE_INTEGER)) {
+          return Number(result);
+        } else {
+          return result;
+        }
       },
     };
     function Writer() {}
@@ -148,15 +155,7 @@
         this.writeUint16(value & 0xffff);
       },
       writeUint64: function (value) {
-        if (value >= 9007199254740992 || value <= -9007199254740992) {
-          throw new Error(
-            "Cannot encode Uint64 of: " +
-              value +
-              " magnitude to big (floating point errors)"
-          );
-        }
-        this.writeUint32(Math.floor(value / 4294967296));
-        this.writeUint32(value % 4294967296);
+        this.writeBuffer(toBufferBE(BigInt(value), 8));
       },
       writeString: notImplemented("writeString"),
       canWriteBinary: function (chunk) {
@@ -323,6 +322,21 @@
         } else {
           writeHeaderRaw(7, 27, writer);
           writer.writeFloat64(data);
+        }
+      } else if (typeof data === "bigint") {
+        if (
+          data < BigInt(Number.MAX_SAFE_INTEGER) &&
+          data > -Number.MAX_SAFE_INTEGER
+        ) {
+          // Integer
+          if (data < 0) {
+            writeHeader(1, -1 - Number(data), writer);
+          } else {
+            writeHeader(0, Number(data), writer);
+          }
+        } else {
+          writeHeaderRaw(0, 27, writer);
+          writer.writeUint64(data);
         }
       } else if (typeof data === "string") {
         writer.writeString(data, function (length) {

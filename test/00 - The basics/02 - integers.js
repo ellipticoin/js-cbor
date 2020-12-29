@@ -31,13 +31,30 @@ describe("Integers:", function () {
     { data: -10, encoded: Buffer.from("29", "hex"), symmetric: true },
     { data: -100, encoded: Buffer.from("3863", "hex"), symmetric: true },
     { data: -1000, encoded: Buffer.from("3903e7", "hex"), symmetric: true },
+    {
+      data: BigInt(Number.MAX_SAFE_INTEGER) + 1n,
+      encoded: Buffer.from("1b0020000000000000", "hex"),
+      symmetric: true,
+    },
+    { data: BigInt(0), encoded: Buffer.from("00", "hex"), symmetric: true },
   ];
 
   examples.forEach(function (example, index) {
     it("Example " + index, function () {
+      var expected;
       var decoded = api.decode(example.encoded);
-      assert.deepEqual(decoded, example.data);
+      if (
+        typeof example.data == "bigint" &&
+        example.data < Number.MAX_SAFE_INTEGER
+      ) {
+        expected = Number(example.data);
+      } else {
+        expected = example.data;
+      }
+
+      assert.deepEqual(decoded, expected);
     });
+
     if (example.symmetric) {
       it("Example " + index + " (encode)", function () {
         var encoded = api.encode(example.data);
