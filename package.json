@@ -1,9 +1,9 @@
 {
-  "name": "cbor-sync",
+  "name": "@ellipticoin/cbor",
   "version": "1.0.4",
   "description": "CBOR encode/decode (synchronous, semantic, browser-compatible)",
-  "homepage": "https://github.com/ARMmbed/cbor-sync",
-  "bugs": "https://github.com/ARMmbed/cbor-sync/issues",
+  "homepage": "https://github.com/ellipticoin/js-cbor",
+  "bugs": "https://github.com/ellipticoin/js-cbor/issues",
   "keywords": [
     "cbor"
   ],
